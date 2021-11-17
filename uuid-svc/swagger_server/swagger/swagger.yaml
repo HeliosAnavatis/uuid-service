@@ -1,0 +1,74 @@
+openapi: 3.0.1
+info:
+  title: GOV.UK GUID Generator
+  description: This is a simple GUID generator microservice.
+  termsOfService: https://www.gov.uk/help/terms-conditions
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Open Government License v3.0
+    url: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+  version: 1.0.0
+servers:
+- url: https://uuid.service.gov.uk/
+- url: http://uuid.service.gov.uk/
+tags:
+- name: uuid
+  description: Access to UUIDs
+paths:
+  /uuid:
+    post:
+      tags:
+      - uuid
+      summary: Request the generation and allocation of a UUID
+      operationId: generate_uuid
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/uuid'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/uuid'
+      x-openapi-router-controller: swagger_server.controllers.uuid_controller
+  /uuid/{uuidstr}:
+    get:
+      tags:
+      - uuid
+      summary: Determine if a provided UUID has been allocated and is valid
+      description: For valid response try UUIDs of the form "3fa85f64-5717-4562-b3fc-2c963f66afa6".
+        Other values will generated exceptions
+      operationId: get_uuid
+      parameters:
+      - name: uuidstr
+        in: path
+        description: uuid that needs to be validated
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: UUID is valid
+          content: {}
+        "404":
+          description: UUID is not valid
+          content: {}
+      x-openapi-router-controller: swagger_server.controllers.uuid_controller
+components:
+  schemas:
+    uuid:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+      example:
+        uuid: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      xml:
+        name: uuid
+
